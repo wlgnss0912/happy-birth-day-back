@@ -1,6 +1,6 @@
 package hbd.cakedecorating.service;
 
-import hbd.cakedecorating.repository.KakaoRepository;
+import hbd.cakedecorating.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class KakaoServiceImpl implements KakaoService {
 
-    private KakaoRepository kakaoRepository;
+    private UserRepository USerRepository;
 
     @Override
     public String getAccessToken(String code) {
