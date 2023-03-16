@@ -1,7 +1,7 @@
 package hbd.cakedecorating.config.auth.dto;
 
 import hbd.cakedecorating.model.user.Role;
-import hbd.cakedecorating.model.user.User;
+import hbd.cakedecorating.model.user.Member;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -25,7 +25,23 @@ public class OAuthAttributes {
     }
 
     public static OAuthAttributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes) {
-        return ofGoogle(userNameAttributeName, attributes);
+        if("kakao".equals(registrationId)) {
+            return ofKakao("id", attributes);
+        }
+        return ofGoogle(userNameAttributeName, attributes);//OAuth2User에서 반환하는 사용자 정보는 Map
+    }
+
+    private static OAuthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
+        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+        Map<String, Object> kakaoProfile = (Map<String, Object>) kakaoAccount.get("profile");
+
+        return OAuthAttributes.builder()
+                .name((String) kakaoProfile.get("nickname"))
+                .email((String) kakaoAccount.get("email"))
+                .picture((String) kakaoProfile.get("profile_image_url"))
+                .attributes(attributes)
+                .nameAttributeKey(userNameAttributeName)
+                .build();
     }
 
     private static OAuthAttributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
@@ -38,8 +54,8 @@ public class OAuthAttributes {
                 .build();
     }
 
-    public User toEntity() {
-        return User.builder()
+    public Member toEntity() {
+        return Member.builder()
                 .name(name)
                 .email(email)
                 .picture(picture)

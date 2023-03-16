@@ -1,12 +1,14 @@
 package hbd.cakedecorating.config.auth;
 
-import hbd.cakedecorating.model.user.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
+@Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
@@ -16,26 +18,25 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors()
+                .and()
                 .csrf().disable()
-                .headers().frameOptions().disable()
+                .formLogin().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/", "/css/**", "/images/**",
-                        "/js/**", "h2-console/**").permitAll()
-                .requestMatchers("/api/v1/**").hasRole(Role.USER.name())
-                .anyRequest().authenticated()
-                .and()
-                    .logout()
-                        .logoutSuccessUrl("/")
+                .anyRequest().permitAll()
+//                .and()
+//                    .logout()
+//                        .logoutSuccessUrl("/")
                 .and()
                     .oauth2Login()
-                        .userInfoEndpoint()
-                            .userService(customOAuth2UserService);
+                        //.defaultSuccessUrl("/oauth/loginInfo", true)
+                        .successHandler(new MyAuthenticationSuccessHandler())
+                            .userInfoEndpoint()
+                                .userService(customOAuth2UserService);//소셜 로그인 성공 시 후속 조치를 진행할 UserService 인터페이스와 구현체를 등록한다.
 
         return http.build();
     }
-
-
-
 
 }
