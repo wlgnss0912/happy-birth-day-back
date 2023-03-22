@@ -33,6 +33,7 @@ public class SecurityConfig {
                     .oauth2Login()
                         //.defaultSuccessUrl("/oauth/loginInfo", true)
                         .successHandler(new MyAuthenticationSuccessHandler())
+                        .failureHandler(new MyAuthenticationFailureHandler())
                             .userInfoEndpoint()
                                 .userService(customOAuth2UserService);//소셜 로그인 성공 시 후속 조치를 진행할 UserService 인터페이스와 구현체를 등록한다.
 

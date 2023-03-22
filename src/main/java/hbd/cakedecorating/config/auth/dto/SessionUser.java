@@ -1,17 +1,15 @@
 package hbd.cakedecorating.config.auth.dto;
 
-import hbd.cakedecorating.model.user.Member;
+import hbd.cakedecorating.model.user.User;
 import lombok.Getter;
 
 @Getter
 public class SessionUser {
     String name;
     String email;
-    String picture;
 
-    public SessionUser(Member user) {
-        this.name = user.getName();
+    public SessionUser(User user) {
+        this.name = user.getNickname();
         this.email = user.getEmail();
-        this.picture = user.getPicture();
     }
 }

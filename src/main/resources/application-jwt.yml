@@ -1,0 +1,10 @@
+jwt:
+  secretKey: CUCChONMLCYHVYcL5QFeZ0Uq1HHLsgYLDI82qb973bIXizMHOItQ4UwNPZCRPyMlKY9f4ifnKstaUdfn0LC8XQ== #64bite이상
+
+  access:
+    expiration: 3600000 #1시간
+    header: Authorization
+
+  refresh:
+    expiration: 1209600000 #2주
+    header: Authorization-refresh

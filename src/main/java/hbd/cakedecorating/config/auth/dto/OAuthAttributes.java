@@ -1,7 +1,7 @@
 package hbd.cakedecorating.config.auth.dto;
 
 import hbd.cakedecorating.model.user.Role;
-import hbd.cakedecorating.model.user.Member;
+import hbd.cakedecorating.model.user.User;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,26 +9,26 @@ import java.util.Map;
 
 @Getter
 public class OAuthAttributes {
-    private Map<String, Object> attributes;
+    private Map<String, Object> attributes;//OAuth2 반환하는 유저정보
     private String nameAttributeKey;
-    private String name;
+    private String nickname;
     private String email;
-    private String picture;
 
     @Builder
-    public OAuthAttributes(Map<String, Object> attributes, String nameAttributeKey, String name, String email, String picture) {
+    public OAuthAttributes(Map<String, Object> attributes, String nameAttributeKey, String nickname, String email) {
         this.attributes = attributes;
         this.nameAttributeKey = nameAttributeKey;
-        this.name = name;
+        this.nickname = nickname;
         this.email = email;
-        this.picture = picture;
     }
 
     public static OAuthAttributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes) {
+        //kakao
         if("kakao".equals(registrationId)) {
             return ofKakao("id", attributes);
         }
-        return ofGoogle(userNameAttributeName, attributes);//OAuth2User에서 반환하는 사용자 정보는 Map
+        //google
+        return ofGoogle(userNameAttributeName, attributes);
     }
 
     private static OAuthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
@@ -36,9 +36,8 @@ public class OAuthAttributes {
         Map<String, Object> kakaoProfile = (Map<String, Object>) kakaoAccount.get("profile");
 
         return OAuthAttributes.builder()
-                .name((String) kakaoProfile.get("nickname"))
+                .nickname((String) kakaoProfile.get("nickname"))
                 .email((String) kakaoAccount.get("email"))
-                .picture((String) kakaoProfile.get("profile_image_url"))
                 .attributes(attributes)
                 .nameAttributeKey(userNameAttributeName)
                 .build();
@@ -46,19 +45,17 @@ public class OAuthAttributes {
 
     private static OAuthAttributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
         return OAuthAttributes.builder()
-                .name((String) attributes.get("name"))
+                .nickname((String) attributes.get("name"))
                 .email((String) attributes.get("email"))
-                .picture((String) attributes.get("picture"))
                 .attributes(attributes)
                 .nameAttributeKey(userNameAttributeName)
                 .build();
     }
 
-    public Member toEntity() {
-        return Member.builder()
-                .name(name)
+    public User toEntity() {
+        return User.builder()
+                .nickname(nickname)
                 .email(email)
-                .picture(picture)
                 .role(Role.GUEST)
                 .build();
     }
