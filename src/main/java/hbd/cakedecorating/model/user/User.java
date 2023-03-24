@@ -33,8 +33,9 @@ public class User {
 
     private String refreshToken;
 
-    public void authorizeUser() {
+    public User authorizeUser() {
         this.role = Role.USER;
+        return this;
     }
 
     public void updateRefreshToken(String updateRefreshToken) {

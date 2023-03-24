@@ -1,6 +1,7 @@
 package hbd.cakedecorating.config.auth.dto;
 
 import hbd.cakedecorating.model.user.Role;
+import hbd.cakedecorating.model.user.SocialType;
 import hbd.cakedecorating.model.user.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,11 +24,9 @@ public class OAuthAttributes {
     }
 
     public static OAuthAttributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes) {
-        //kakao
         if("kakao".equals(registrationId)) {
             return ofKakao("id", attributes);
         }
-        //google
         return ofGoogle(userNameAttributeName, attributes);
     }
 
@@ -52,8 +51,10 @@ public class OAuthAttributes {
                 .build();
     }
 
-    public User toEntity() {
+    public User toEntity(SocialType socialType) {
         return User.builder()
+                .socialType(socialType)
+                .socialId((String) attributes.get(nameAttributeKey))
                 .nickname(nickname)
                 .email(email)
                 .role(Role.GUEST)

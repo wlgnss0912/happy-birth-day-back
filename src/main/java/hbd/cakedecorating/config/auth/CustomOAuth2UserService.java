@@ -1,10 +1,10 @@
 package hbd.cakedecorating.config.auth;
 
+import hbd.cakedecorating.config.auth.dto.CustomOAuth2User;
 import hbd.cakedecorating.config.auth.dto.OAuthAttributes;
-import hbd.cakedecorating.config.auth.dto.SessionUser;
+import hbd.cakedecorating.model.user.SocialType;
 import hbd.cakedecorating.model.user.User;
 import hbd.cakedecorating.repository.UserRepository;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,47 +18,54 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
+import static hbd.cakedecorating.model.user.SocialType.*;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserRepository userRepository;
-    private final HttpSession httpSession;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
+        log.info("CustomOAuth2UserService.loadUser() 실행 - OAuth2 로그인 요청 진입");
+
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
-        //OAuth 서비스(google, kakao)에서 가져온 유저 정보를 담고 있음.
-        OAuth2User oAuth2User = delegate.loadUser(userRequest);
+        OAuth2User oAuth2User = delegate.loadUser(userRequest);//소셜 로그인 사용자 정보 제공 API로 요청(OAuth 서비스에서 가져온 유저 정보)
 
-        //OAuth의 이름 (google, kakao...)
-        String registrationId = userRequest.getClientRegistration().getRegistrationId();
-        //OAuth 로그인 시 키(PK)가 되는 필드 값 //google의 경우 기존적으로 "sub"로 지원하지만, 카카오 네이버 등은 기본 지원 x
+        String registrationId = userRequest.getClientRegistration().getRegistrationId();//google, kakao
+        SocialType socialType = getSocialType(registrationId);
         String userNameAttributeName = userRequest.getClientRegistration()
-                .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
+                .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();//OAuth 로그인 시 키(PK)가 되는 필드 값
 
-        log.info("registrationId = {}", registrationId);
+        log.info("socialType = {}", socialType);
         log.info("userNameAttributeName = {}", userNameAttributeName);
 
-        //OAuth2UserService를 통해서 가져온 OAuth2User의 attribute를 담고있는 클래스(카카오도 이 클래스 사용)
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
 
-        User user = saveOrUpdate(attributes);
+        User user = saveOrUpdate(socialType, attributes);
 
-        httpSession.setAttribute("user", new SessionUser(user));
-
-        return new DefaultOAuth2User(
+        return new CustomOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())),
                 attributes.getAttributes(),
-                attributes.getNameAttributeKey());
+                attributes.getNameAttributeKey(),
+                user.getRole(),
+                user.getEmail());
     }
 
-    private User saveOrUpdate(OAuthAttributes attributes) {
-        User user = userRepository.findByEmail(attributes.getEmail())
+    private SocialType getSocialType(String registrationId) {
+        if(kakao.equals(registrationId)) {
+            return kakao;
+        }
+        return google;
+    }
+
+    private User saveOrUpdate(SocialType socialType, OAuthAttributes attributes) {
+        User user = userRepository.findBySocialTypeAndSocialId(socialType, attributes.getNameAttributeKey())
                 .map(entity -> entity.update(attributes.getNickname()))
-                .orElse(attributes.toEntity());
+                .orElse(attributes.toEntity(socialType));
 
         return userRepository.save(user);
     }

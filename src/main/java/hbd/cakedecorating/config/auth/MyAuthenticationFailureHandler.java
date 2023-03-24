@@ -16,8 +16,10 @@ import java.io.IOException;
 public class MyAuthenticationFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-      log.info("file!");
+      log.info("social Login fail! error={}", exception.getMessage());
 
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      response.getWriter().write("소셜 로그인 실패! 서버 로그를 확인해 주세요.");
       response.sendRedirect(UriComponentsBuilder.fromUriString("http://localhost:3000")
               .toUriString());
     }
