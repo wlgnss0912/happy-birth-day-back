@@ -16,6 +16,7 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -68,8 +69,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         jwtService.extractAccessToken(request)
                 .filter(jwtService::isTokenValid)
-                .ifPresent(accessToken -> jwtService.extractEmail(accessToken)
-                        .ifPresent(email -> userRepository.findByEmail(email)
+                .ifPresent(accessToken -> jwtService.extractNickname(accessToken)
+                        .ifPresent(nickname -> userRepository.findByNickname(nickname)
                                 .ifPresent(this::saveAuthentication)));
 
         filterChain.doFilter(request, response);//다음 필터로 넘겨줌
@@ -80,7 +81,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         String password = "ds213a4d4f3a2323j4k32njk4235lv";
 
         UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
-                .username(user.getEmail())
+                .username(user.getNickname())
                 .password(password)
                 .roles(user.getRole().name())
                 .build();
@@ -99,7 +100,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         userRepository.findByRefreshToken(refreshToken)
                 .ifPresent(user -> {
                     String reIssueRefreshToken = reIssueRefreshToken(user);
-                    jwtService.sendAccessAndRefreshToken(response, jwtService.createAccessToken(user.getEmail()), reIssueRefreshToken);
+                    jwtService.sendAccessAndRefreshToken(response, jwtService.createAccessToken(user.getNickname()), reIssueRefreshToken);
                 });
     }
 

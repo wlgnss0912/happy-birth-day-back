@@ -5,10 +5,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import hbd.cakedecorating.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -40,18 +40,18 @@ public class JwtService {
 
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
-    private static final String EMAIL_CLAIM = "email";
+    private static final String NICKNAME_CLAIM = "nickname";
     private static final String BEARER = "Bearer ";
 
     /**
      * AccessToken 생성 메소드
      */
-    public String createAccessToken(String email) {
+    public String createAccessToken(String nickname) {
         Date now = new Date();
         return JWT.create()
                 .withSubject(ACCESS_TOKEN_SUBJECT)
                 .withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod))
-                .withClaim(EMAIL_CLAIM, email)
+                .withClaim(NICKNAME_CLAIM, nickname)
                 .sign(Algorithm.HMAC512(secretKey));
     }
 
@@ -110,13 +110,14 @@ public class JwtService {
     /**
      * AccessToken의 Claim 값 추출
      * @return 휴효 시 claim 값 추출 / 유효하지 않다면 빈 Optional 객체 반환
+     * @param accessToken
      */
-    public Optional<String> extractEmail(String accessToken) {
+    public Optional<String> extractNickname(String accessToken) {
         try {
             return Optional.ofNullable(JWT.require(Algorithm.HMAC512(secretKey))
                     .build()
                     .verify(accessToken)//유효성 체크
-                    .getClaim(EMAIL_CLAIM)
+                    .getClaim(NICKNAME_CLAIM)
                     .asString());
         } catch (Exception e) {
             log.error("엑세스 토큰이 유효하지 않습니다.");
@@ -127,8 +128,9 @@ public class JwtService {
     /**
      * RefreshToken DB 저장(update)
      */
-    public void updateRefreshToken(String email, String refreshToken) {
-        userRepository.findByEmail(email)
+    @Transactional
+    public void updateRefreshToken(String nickname, String refreshToken) {
+        userRepository.findByNickname(nickname)
                 .ifPresentOrElse(
                         user -> user.updateRefreshToken(refreshToken),
                         () -> new Exception("일치하는 회원이 없습니다.")

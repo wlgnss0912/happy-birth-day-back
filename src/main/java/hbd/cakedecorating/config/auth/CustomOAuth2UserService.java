@@ -40,6 +40,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String userNameAttributeName = userRequest.getClientRegistration()
                 .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();//OAuth 로그인 시 키(PK)가 되는 필드 값
 
+        log.info("registrationId = {}", registrationId);
         log.info("socialType = {}", socialType);
         log.info("userNameAttributeName = {}", userNameAttributeName);
 
@@ -52,19 +53,20 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 attributes.getAttributes(),
                 attributes.getNameAttributeKey(),
                 user.getRole(),
-                user.getEmail());
+                user.getNickname());
     }
 
     private SocialType getSocialType(String registrationId) {
-        if(kakao.equals(registrationId)) {
+        if(registrationId.equals(kakao.toString())) {
             return kakao;
         }
         return google;
     }
 
     private User saveOrUpdate(SocialType socialType, OAuthAttributes attributes) {
-        User user = userRepository.findBySocialTypeAndSocialId(socialType, attributes.getNameAttributeKey())
-                .map(entity -> entity.update(attributes.getNickname()))
+        User user = userRepository.findBySocialTypeAndSocialId(socialType, String.valueOf(attributes.getAttributes().get(attributes.getNameAttributeKey())))
+                .map(entity -> entity.update(
+                        attributes.getNickname()))
                 .orElse(attributes.toEntity(socialType));
 
         return userRepository.save(user);

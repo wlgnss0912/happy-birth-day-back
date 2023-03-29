@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Getter
 public class OAuthAttributes {
@@ -54,7 +55,7 @@ public class OAuthAttributes {
     public User toEntity(SocialType socialType) {
         return User.builder()
                 .socialType(socialType)
-                .socialId((String) attributes.get(nameAttributeKey))
+                .socialId(String.valueOf(attributes.get(nameAttributeKey)))
                 .nickname(nickname)
                 .email(email)
                 .role(Role.GUEST)

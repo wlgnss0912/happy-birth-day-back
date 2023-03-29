@@ -1,5 +1,8 @@
 package hbd.cakedecorating.config.auth;
 
+import hbd.cakedecorating.config.jwt.filter.JwtAuthenticationProcessingFilter;
+import hbd.cakedecorating.config.jwt.service.JwtService;
+import hbd.cakedecorating.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,12 +12,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
-@RequiredArgsConstructor
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final JwtService jwtService;
+    private final UserRepository userRepository;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final AuthenticationSuccessHandler MyAuthenticationSuccessHandler;
     private final AuthenticationFailureHandler authenticationFailureHandler;
@@ -32,7 +38,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)//session 사용 x
                 .and()
                 .authorizeHttpRequests()
-                //.requestMatchers("/login").permitAll()
+                .requestMatchers("/signup").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login()
@@ -40,7 +46,12 @@ public class SecurityConfig {
                 .failureHandler(authenticationFailureHandler)//소셜 로그인 실패
                 .userInfoEndpoint().userService(customOAuth2UserService);//소셜 로그인 성공 시 후속 조치를 진행할 UserService 인터페이스와 구현체를 등록한다.
 
+        // 원래 스프링 시큐리티 필터 순서가 LogoutFilter 이후에 로그인 필터 동작
+        // 따라서, LogoutFilter 이후에 우리가 만든 필터 동작하도록 설정
+        http.addFilterAfter(new JwtAuthenticationProcessingFilter(jwtService, userRepository), LogoutFilter.class);
+
         return http.build();
     }
+
 
 }
