@@ -1,4 +1,4 @@
-package hbd.cakedecorating.model.user;
+package hbd.cakedecorating.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -6,14 +6,17 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "users")
-public class User {
+public class  User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
     @Column(nullable = false)
@@ -22,16 +25,22 @@ public class User {
     private String birthday;
     private String email;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(name = "social_type")
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
+    @Column(name = "social_id")
     private String socialId;//로그인한 소셜 타입의 식별자 값
 
+    @Column(name = "refresh_token")
     private String refreshToken;
+
+    @Column(name = "reg_date")
+    private LocalDateTime regDate;
 
     public User authorizeUser(String birthday) {
         this.role = Role.USER;

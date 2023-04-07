@@ -1,13 +1,12 @@
 package hbd.cakedecorating.config.auth.dto;
 
-import hbd.cakedecorating.model.user.Role;
-import hbd.cakedecorating.model.user.SocialType;
-import hbd.cakedecorating.model.user.User;
+import hbd.cakedecorating.model.Role;
+import hbd.cakedecorating.model.SocialType;
+import hbd.cakedecorating.model.User;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.Map;
-import java.util.UUID;
 
 @Getter
 public class OAuthAttributes {

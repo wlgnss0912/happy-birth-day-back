@@ -1,7 +1,6 @@
 package hbd.cakedecorating.config.auth.dto;
 
-import hbd.cakedecorating.model.user.Role;
-import hbd.cakedecorating.model.user.User;
+import hbd.cakedecorating.model.Role;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;

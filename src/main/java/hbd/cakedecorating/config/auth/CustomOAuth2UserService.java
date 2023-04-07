@@ -2,8 +2,8 @@ package hbd.cakedecorating.config.auth;
 
 import hbd.cakedecorating.config.auth.dto.CustomOAuth2User;
 import hbd.cakedecorating.config.auth.dto.OAuthAttributes;
-import hbd.cakedecorating.model.user.SocialType;
-import hbd.cakedecorating.model.user.User;
+import hbd.cakedecorating.model.SocialType;
+import hbd.cakedecorating.model.User;
 import hbd.cakedecorating.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,13 +12,12 @@ import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserServ
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
-import static hbd.cakedecorating.model.user.SocialType.*;
+import static hbd.cakedecorating.model.SocialType.*;
 
 @Slf4j
 @RequiredArgsConstructor

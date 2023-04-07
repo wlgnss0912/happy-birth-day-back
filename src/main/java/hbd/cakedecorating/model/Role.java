@@ -1,4 +1,4 @@
-package hbd.cakedecorating.model.user;
+package hbd.cakedecorating.model;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -2,27 +2,20 @@ package hbd.cakedecorating.config.auth;
 
 import hbd.cakedecorating.config.auth.dto.CustomOAuth2User;
 import hbd.cakedecorating.config.jwt.service.JwtService;
-import hbd.cakedecorating.model.user.Role;
-import hbd.cakedecorating.model.user.SocialType;
-import hbd.cakedecorating.model.user.User;
 import hbd.cakedecorating.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.parameters.P;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
-import static hbd.cakedecorating.model.user.Role.GUEST;
+import static hbd.cakedecorating.model.Role.GUEST;
 
 @Slf4j
 @Component
@@ -42,12 +35,13 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
         if (user.getRole() == GUEST) {
             String accessToken = jwtService.createAccessToken(user.getNickname());
             //response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
-            response.sendRedirect(UriComponentsBuilder.fromUriString("http://localhost:3000/addInfo")
+            response.sendRedirect(UriComponentsBuilder.fromUriString("http://localhost:3000/user/addInfo")
                     .queryParam(jwtService.getAccessHeader(), accessToken)
                     .build()
                     .toUriString());
 
             log.info("여기 지나가용");
+
 
             jwtService.sendAccessAndRefreshToken(response, accessToken, null);
 

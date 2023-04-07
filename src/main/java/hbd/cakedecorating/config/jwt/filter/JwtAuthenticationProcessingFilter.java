@@ -1,7 +1,7 @@
 package hbd.cakedecorating.config.jwt.filter;
 
 import hbd.cakedecorating.config.jwt.service.JwtService;
-import hbd.cakedecorating.model.user.User;
+import hbd.cakedecorating.model.User;
 import hbd.cakedecorating.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,7 +16,6 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;

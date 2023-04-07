@@ -1,16 +1,11 @@
 package hbd.cakedecorating.service;
 
-import hbd.cakedecorating.config.auth.dto.CustomOAuth2User;
 import hbd.cakedecorating.config.jwt.service.JwtService;
-import hbd.cakedecorating.dto.UserUpdateDto;
-import hbd.cakedecorating.model.user.User;
+import hbd.cakedecorating.model.User;
 import hbd.cakedecorating.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
