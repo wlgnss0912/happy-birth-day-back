@@ -1,4 +1,4 @@
-package hbd.cakedecorating.dto;
+package hbd.cakedecorating.dto.user;
 
 import lombok.Getter;
 

@@ -1,4 +1,4 @@
-package hbd.cakedecorating.repository;
+package hbd.cakedecorating.repository.user;
 
 import hbd.cakedecorating.model.SocialType;
 import hbd.cakedecorating.model.User;
@@ -8,7 +8,6 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findByEmail(String email);
     Optional<User> findByNickname(String nickname);
     Optional<User> findByRefreshToken(String refreshToken);
 

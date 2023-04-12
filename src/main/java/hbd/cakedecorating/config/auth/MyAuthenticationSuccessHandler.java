@@ -2,7 +2,7 @@ package hbd.cakedecorating.config.auth;
 
 import hbd.cakedecorating.config.auth.dto.CustomOAuth2User;
 import hbd.cakedecorating.config.jwt.service.JwtService;
-import hbd.cakedecorating.repository.UserRepository;
+import hbd.cakedecorating.repository.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -65,7 +65,7 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
         jwtService.updateRefreshToken(user.getNickname(), refreshToken);
 
-        response.sendRedirect(UriComponentsBuilder.fromUriString("http://localhost:3000/canvas")
+        response.sendRedirect(UriComponentsBuilder.fromUriString("http://localhost:3000/user/myTable")
                 .build()
                 .toUriString());
     }

@@ -2,7 +2,7 @@ package hbd.cakedecorating.config.jwt.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import hbd.cakedecorating.repository.UserRepository;
+import hbd.cakedecorating.repository.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;

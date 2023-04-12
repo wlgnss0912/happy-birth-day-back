@@ -2,7 +2,7 @@ package hbd.cakedecorating.config.jwt.filter;
 
 import hbd.cakedecorating.config.jwt.service.JwtService;
 import hbd.cakedecorating.model.User;
-import hbd.cakedecorating.repository.UserRepository;
+import hbd.cakedecorating.repository.user.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

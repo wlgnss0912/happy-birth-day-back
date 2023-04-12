@@ -1,6 +1,6 @@
 package hbd.cakedecorating.controller;
 
-import hbd.cakedecorating.service.UserService;
+import hbd.cakedecorating.service.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +19,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/signup")
+    @PostMapping("/api/signup")
     public ResponseEntity<Object> signup(@RequestParam String birthday, HttpServletRequest request) throws URISyntaxException {
         userService.signup(request.getHeader(accessHeader), birthday);
 

@@ -2,14 +2,13 @@ package hbd.cakedecorating.config.auth;
 
 import hbd.cakedecorating.config.jwt.filter.JwtAuthenticationProcessingFilter;
 import hbd.cakedecorating.config.jwt.service.JwtService;
-import hbd.cakedecorating.repository.UserRepository;
+import hbd.cakedecorating.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -39,7 +38,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)//session 사용 x
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/signup").permitAll()
+                .requestMatchers("/api/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .oauth2Login()

@@ -1,13 +1,14 @@
-package hbd.cakedecorating.service;
+package hbd.cakedecorating.service.user;
 
 import hbd.cakedecorating.config.jwt.service.JwtService;
 import hbd.cakedecorating.model.User;
-import hbd.cakedecorating.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import hbd.cakedecorating.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
 

@@ -4,7 +4,7 @@ import hbd.cakedecorating.config.auth.dto.CustomOAuth2User;
 import hbd.cakedecorating.config.auth.dto.OAuthAttributes;
 import hbd.cakedecorating.model.SocialType;
 import hbd.cakedecorating.model.User;
-import hbd.cakedecorating.repository.UserRepository;
+import hbd.cakedecorating.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
