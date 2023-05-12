@@ -3,19 +3,19 @@ package hbd.cakedecorating.service.food;
 import hbd.cakedecorating.dto.food.FoodListDto;
 import hbd.cakedecorating.model.Food;
 import hbd.cakedecorating.repository.food.FoodRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class FoodService {
 
