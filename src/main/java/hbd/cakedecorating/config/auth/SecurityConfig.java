@@ -38,8 +38,8 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)//session 사용 x
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/**").permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers("/**").permitAll()
+                //.anyRequest().authenticated()
                 .and()
                 .oauth2Login()
                 .successHandler(MyAuthenticationSuccessHandler)//소셜로그인 동의하고 계속하기
