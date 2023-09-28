@@ -1,6 +1,6 @@
 package hbd.cakedecorating.dto.diningTable;
 
-import hbd.cakedecorating.model.DiningTable;
+import hbd.cakedecorating.api.model.DiningTable;
 import lombok.Data;
 import lombok.Getter;
 

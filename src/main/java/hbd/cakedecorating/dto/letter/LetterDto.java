@@ -1,8 +1,5 @@
 package hbd.cakedecorating.dto.letter;
 
-import com.querydsl.core.Tuple;
-import hbd.cakedecorating.model.Food;
-import hbd.cakedecorating.model.Letter;
 import lombok.Data;
 import lombok.Getter;
 

@@ -1,16 +1,13 @@
 package hbd.cakedecorating.oauth.service;
 
-
-import hbd.cakedecorating.api.entity.User;
-import hbd.cakedecorating.api.repository.user.UserRepository;
-import hbd.cakedecorating.oauth.entity.ProviderType;
-import hbd.cakedecorating.oauth.entity.RoleType;
-import hbd.cakedecorating.oauth.entity.UserPrincipal;
-import hbd.cakedecorating.oauth.exception.OAuthProviderMissMatchException;
+import hbd.cakedecorating.oauth.model.ProviderType;
+import hbd.cakedecorating.oauth.model.Role;
+import hbd.cakedecorating.api.model.user.User;
+import hbd.cakedecorating.oauth.model.UserPrincipal;
 import hbd.cakedecorating.oauth.info.OAuth2UserInfo;
 import hbd.cakedecorating.oauth.info.OAuth2UserInfoFactory;
+import hbd.cakedecorating.api.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -20,8 +17,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
-
 
 /**
  * loadUser 함수는 다음과 같이 작동합니다.
@@ -37,63 +32,65 @@ import java.util.Optional;
  * - attributes: 인증된 사용자의 속성 목록
  */
 
-@Slf4j
-@Service
 @RequiredArgsConstructor
+@Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
 
+    //구글 로그인 버튼 클릭 -> 구글 로그인창 -> 로그인 완료 -> code를 리턴(OAuth-Clien라이브러리가 받아줌) -> code를 통해서 AcssToken요청(access토큰 받음)
+    //OAuth2-client 라이브러리가 code단계 처리후 OAuth2UserRequest객체에 엑세스 토큰, 플랫폼 사용자 고유 key값을 반환해준다.
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        log.info("OAuth2 로그인 요청 진입");
+    public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
 
-        OAuth2User user = super.loadUser(userRequest);//소셜 로그인 사용자 정보 제공 API로 요청(OAuth 서비스에서 가져온 유저 정보)
+        OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest); //oauth에서 가져온 user 정보
 
         try {
-            return this.process(userRequest, user);
-        } catch (AuthenticationException ex) {//인증 에러(이름, 암호, 만료 등)
+            return process(oAuth2UserRequest, oAuth2User);//인증된 사용자 정보
+        } catch (AuthenticationException ex) {//인증 예외
             throw ex;
         } catch (Exception ex) {
-            ex.printStackTrace();//발생한 예외 스택을 추적을 콘솔에 출력
-            throw new InternalAuthenticationServiceException(ex.getMessage(), ex.getCause());//스프링 시큐리티 내부 오류 - 메시지, 원인 출력
+            ex.printStackTrace();
+            throw new InternalAuthenticationServiceException(ex.getMessage(), ex.getCause());//일반 예외 - 시스템 문제로 내부 인증 관련 처리 요청 x
         }
     }
 
-    private OAuth2User process(OAuth2UserRequest userRequest, OAuth2User user) {
-        ProviderType providerType = ProviderType.valueOf(userRequest.getClientRegistration().getClientId().toUpperCase());//GOOGLE, KAKAO
+    protected OAuth2User process(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {
 
-        //DefaultOAuth2UserService.getAttributes() 메서드는 인증된 사용자의 속성을 반환
-            //  -> Kakao  - id, nickname, email, profile_image
-            //  -> google - id, name, email, profile_picture
-        OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
-        User savedUser = userRepository.findByUserId(userInfo.getId());
+        //플렛폼 구분 - GOOGLE, KAKAO
+        ProviderType providerType = ProviderType.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId().toUpperCase());
 
+        //플렛폼 별 사용자 추가정보
+        OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, oAuth2User.getAttributes());
+
+        User savedUser = userRepository.findByEmail(oAuth2UserInfo.getEmail()).orElse(null);
+
+        //가입된 경우
         if(savedUser != null) {
-            if(providerType != savedUser.getProviderType()) {
-                throw new OAuthProviderMissMatchException(
-                        "Looks like you're signed up with " + providerType +
-                                " account. Please use your " + savedUser.getProviderType() + " account to login."
-                );
+            if(!savedUser.getProviderType().equals(providerType)) {
+                throw new RuntimeException("Looks like you're signed up with " + providerType +
+                        " account. Please use your " + savedUser.getProviderType() + " account to login.");
             }
-            updateUser(savedUser, userInfo);
-        } else {
-            savedUser = createUser(userInfo, providerType);
+            updateUser(savedUser, oAuth2UserInfo);
         }
+        //미가입 경우
+        else {
+            savedUser = registerUser(providerType, oAuth2UserInfo);
+        }
+        return UserPrincipal.create(savedUser, oAuth2User.getAttributes());
+   }
 
-        return UserPrincipal.create(savedUser, user.getAttributes());
-    }
+    private User registerUser(ProviderType providerType, OAuth2UserInfo oauth2UserInfo) {
 
-    private User createUser(OAuth2UserInfo userInfo, ProviderType providerType) {
-        LocalDateTime now =  LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
+
         User user = User.builder()
-                .userId(userInfo.getId())
-                .username(userInfo.getName())
-                .email(userInfo.getEmail())
+                .userId(oauth2UserInfo.getId())
+                .username(oauth2UserInfo.getName())
+                .email(oauth2UserInfo.getEmail())
                 .emailVerifiedYn("Y")
-                .profileImageUrl(userInfo.getImageUrl())
                 .providerType(providerType)
-                .roleType(RoleType.USER)
+                .role(Role.GUEST)
                 .createdAt(now)
                 .modifiedAt(now)
                 .build();
@@ -101,12 +98,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return userRepository.saveAndFlush(user);//1. 즉시 저장소에 반영되어야 하는 경우 2. 트랜잭션 내에서 엔티티의 변경 내용을 읽어야 하는 경우
     }
 
-    private User updateUser(User savedUser, OAuth2UserInfo userInfo) {
-        if(userInfo.getName() != null && savedUser.getUsername().equals(userInfo.getName())) {
-            savedUser.setUsername(userInfo.getName());
-        }
-        if(userInfo.getImageUrl() != null && !savedUser.getProfileImageUrl().equals(userInfo.getImageUrl())) {
-            savedUser.setProfileImageUrl(userInfo.getImageUrl());
+    private User updateUser(User savedUser, OAuth2UserInfo oAuth2UserInfo) {
+        if(oAuth2UserInfo.getName() != null && !savedUser.getUsername().equals(oAuth2UserInfo.getName())) {
+            savedUser.setUsername(oAuth2UserInfo.getName());
         }
 
         return savedUser;

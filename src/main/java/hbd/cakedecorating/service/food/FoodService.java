@@ -1,8 +1,8 @@
 package hbd.cakedecorating.service.food;
 
 import hbd.cakedecorating.dto.food.FoodListDto;
-import hbd.cakedecorating.model.Food;
-import hbd.cakedecorating.repository.food.FoodRepository;
+import hbd.cakedecorating.api.model.Food;
+import hbd.cakedecorating.api.repository.food.FoodRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

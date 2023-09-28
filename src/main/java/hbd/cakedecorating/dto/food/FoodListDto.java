@@ -1,6 +1,6 @@
 package hbd.cakedecorating.dto.food;
 
-import hbd.cakedecorating.model.Food;
+import hbd.cakedecorating.api.model.Food;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;

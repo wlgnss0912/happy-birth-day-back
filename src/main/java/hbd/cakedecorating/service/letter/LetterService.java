@@ -1,18 +1,13 @@
 package hbd.cakedecorating.service.letter;
 
 import hbd.cakedecorating.dto.letter.LetterDto;
-import hbd.cakedecorating.model.DiningTable;
-import hbd.cakedecorating.model.Letter;
-import hbd.cakedecorating.repository.diningTable.DiningTableRepository;
-import hbd.cakedecorating.repository.letter.LetterRepository;
+import hbd.cakedecorating.api.model.DiningTable;
+import hbd.cakedecorating.api.repository.diningTable.DiningTableRepository;
+import hbd.cakedecorating.api.repository.letter.LetterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

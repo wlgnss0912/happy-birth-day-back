@@ -1,7 +1,7 @@
 package hbd.cakedecorating.oauth.handler;
 
-import hbd.cakedecorating.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import hbd.cakedecorating.utils.CookieUtil;
+import hbd.cakedecorating.oauth.repository.CookieAuthorizationRequestRepository;
+import hbd.cakedecorating.utils.CookieUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,28 +14,33 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
-import static hbd.cakedecorating.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
+import static hbd.cakedecorating.oauth.repository.CookieAuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 
+/**
+ * successHandler와 마찬가지로 최초 oauth 인증 요청 시, auth_code와 콜백 url로 리다이렉션
+ * cookie에 저장된 redirect_uri를 가져옵니다. 그리고 인증에 대한 오류를 error라는 parameter로 url에 함께 붙여 보내게 됩니다.
+ */
 @Component
 @RequiredArgsConstructor
 public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
-    private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
+    private final CookieAuthorizationRequestRepository cookieAuthorizationRequestRepository;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        String targetUrl = CookieUtil.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
+        // 쿠키에 저장된 redirect_url 가져오기
+        String targetUrl = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue)
-                .orElse(null);
+                .orElse("/");
 
-        exception.printStackTrace();
-
+        // query param 추가 후, uri 문자열로 변환
         targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("error", exception.getLocalizedMessage())
                 .build().toUriString();
 
-        authorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
+        cookieAuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
 
+        // redirect
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 }
