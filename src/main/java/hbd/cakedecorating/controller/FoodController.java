@@ -19,7 +19,7 @@ public class FoodController {
 
     private final FoodService foodService;
 
-    @GetMapping("/food")
+    @GetMapping("/api/food")
     public ResponseEntity<Object> foodList() {
 
         List<FoodListDto.FoodListResponseDto> foodList = foodService.findFoodList();
@@ -27,7 +27,7 @@ public class FoodController {
         return ResponseEntity.status(HttpStatus.OK).body(foodList);
     }
 
-    @PostMapping("/food")
+    @PostMapping("/api/food")
     public ResponseEntity<Object> createFood(@RequestBody FoodListDto.FoodListRequestDto foodParams) {
 
         Long foodId = foodService.addFood(foodParams);
@@ -35,7 +35,7 @@ public class FoodController {
         return ResponseEntity.status(HttpStatus.OK).body(foodId);
     }
 
-    @PostMapping("/saveImage")
+    @PostMapping("/api/saveImage")
     public ResponseEntity<Object> saveImage(@RequestParam(value = "file") MultipartFile[] files) {
 
         String uploadFolder = "C:\\Users\\HNFincore\\Desktop\\FOODIMG";

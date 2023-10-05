@@ -1,10 +1,12 @@
-package hbd.cakedecorating.config;
+package hbd.cakedecorating.config.security;
 
+import hbd.cakedecorating.oauth.filter.TokenAuthenticationFilter;
 import hbd.cakedecorating.oauth.handler.OAuth2AuthenticationFailureHandler;
 import hbd.cakedecorating.oauth.handler.OAuth2AuthenticationSuccessHandler;
 import hbd.cakedecorating.oauth.repository.CookieAuthorizationRequestRepository;
 import hbd.cakedecorating.oauth.service.CustomOAuth2UserService;
 import hbd.cakedecorating.oauth.service.CustomUserDetailsService;
+import hbd.cakedecorating.oauth.token.AuthTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -22,6 +25,7 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
     private final CustomOAuth2UserService oAuth2UserService;
+    private final AuthTokenProvider tokenProvider;
     private final CookieAuthorizationRequestRepository cookieAuthorizationRequestRepository;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
@@ -71,14 +75,7 @@ public class SecurityConfig {
                 .deleteCookies("JSESSIONID");
 
         //jwt filter 설정
-        //http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
-
-        // [PART4]
-        // 원래 스프링 시큐리티 필터 순서가 LogoutFilter 이후에 로그인 필터 동작
-        // 따라서, LogoutFilter 이후에 우리가 만든 필터 동작하도록 설정
-        // 순서 : LogoutFilter -> JwtAuthenticationProcessingFilter -> CustomJsonUsernamePasswordAuthenticationFilter
-        //http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
-        //http.addFilterBefore(jwtAuthenticationProcessingFilter(), CustomJsonUsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new TokenAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
 
