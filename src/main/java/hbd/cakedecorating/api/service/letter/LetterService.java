@@ -1,4 +1,4 @@
-package hbd.cakedecorating.service.letter;
+package hbd.cakedecorating.api.service.letter;
 
 import hbd.cakedecorating.dto.letter.LetterDto;
 import hbd.cakedecorating.api.model.DiningTable;

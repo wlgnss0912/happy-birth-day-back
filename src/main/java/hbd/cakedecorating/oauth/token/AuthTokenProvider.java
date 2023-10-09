@@ -47,7 +47,7 @@ public class AuthTokenProvider {
                             .collect(Collectors.toList());
 
             log.debug("claims subject := [{}]", claims.getSubject());
-            User principal = new User(claims.getSubject(), "", authorities);// 권한 정보로 User 객체  생성
+            User principal = new User(claims.getSubject(), "", authorities);// 권한 정보로 User 객체 생성
 
             return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);//인증된 사용자
         } else {

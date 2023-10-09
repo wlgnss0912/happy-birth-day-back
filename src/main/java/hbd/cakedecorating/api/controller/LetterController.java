@@ -1,7 +1,7 @@
-package hbd.cakedecorating.controller;
+package hbd.cakedecorating.api.controller;
 
 import hbd.cakedecorating.dto.letter.LetterDto;
-import hbd.cakedecorating.service.letter.LetterService;
+import hbd.cakedecorating.api.service.letter.LetterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

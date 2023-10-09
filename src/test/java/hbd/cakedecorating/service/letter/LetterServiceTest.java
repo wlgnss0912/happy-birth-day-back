@@ -1,17 +1,14 @@
 package hbd.cakedecorating.service.letter;
 
+import hbd.cakedecorating.api.service.letter.LetterService;
 import hbd.cakedecorating.dto.letter.LetterDto;
 import jakarta.transaction.Transactional;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,7 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 class LetterServiceTest {
 
-    @Autowired LetterService letterService;
+    @Autowired
+    LetterService letterService;
 
     @Test
     public void 편지단건조회() throws Exception {

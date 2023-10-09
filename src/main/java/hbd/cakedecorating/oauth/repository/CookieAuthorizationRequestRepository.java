@@ -21,6 +21,7 @@ public class CookieAuthorizationRequestRepository implements AuthorizationReques
 
     public static final String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2_auth_request";
     public static final String REDIRECT_URI_PARAM_COOKIE_NAME = "redirect_uri";
+    public static final String REFRESH_TOKEN = "refresh_token";
     private static final int COOKIE_EXPIRE_SECONDS = 180;
 
 
@@ -40,6 +41,7 @@ public class CookieAuthorizationRequestRepository implements AuthorizationReques
         if(authorizationRequest == null) {
             CookieUtils.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
             CookieUtils.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_NAME);
+            CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
             return;
         }
 
@@ -65,5 +67,6 @@ public class CookieAuthorizationRequestRepository implements AuthorizationReques
     public void removeAuthorizationRequestCookies(HttpServletRequest request, HttpServletResponse response) {
         CookieUtils.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
         CookieUtils.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_NAME);
+        CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
     }
 }

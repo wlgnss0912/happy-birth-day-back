@@ -1,4 +1,4 @@
-package hbd.cakedecorating.service.diningTable;
+package hbd.cakedecorating.api.service.diningTable;
 
 import hbd.cakedecorating.api.model.DiningTable;
 import hbd.cakedecorating.api.repository.diningTable.DiningTableRepository;

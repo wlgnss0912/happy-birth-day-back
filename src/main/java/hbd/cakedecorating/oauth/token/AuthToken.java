@@ -70,6 +70,7 @@ public class AuthToken {
         return null;
     }
 
+    // Access Token 만료 갱신 시, 사용할 claims 을 얻기 위함.
     // 만료된 token의 claims 정보
     public Claims getExpiredTokenClaims() {
         try {

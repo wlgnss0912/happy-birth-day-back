@@ -16,8 +16,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 /**
- * GenericFilterBean은 더 일반적인 필터를 만들 때 사용되며,
- * OncePerRequestFilter는 한 번만 실행해야 하는 필터를 만들 때 사용됩니다.
+ * 어느 서블릿 컨테이너에서나 요청 당 한 번의 실행을 보장하는 것을 목표로 한다.
+ * 동일한 request안에서 한번만 필터링을 할 수 있게 해주는 것이 OncePerRequestFilter의 역할이고
+ * 보통 인증 또는 인가와 같이 한번만 거쳐도 되는 로직에서 사용
  */
 
 @Slf4j
@@ -35,6 +36,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         if(authToken.validate()) {
             Authentication authentication = tokenProvider.getAuthentication(authToken);// 인증된 사용자
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.debug(authentication.getName() + "의 인증정보 저장.");
+        } else {
+            log.debug("not exists invalid jwt token.");
         }
 
         filterChain.doFilter(request, response);

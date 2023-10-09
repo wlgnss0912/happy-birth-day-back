@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import static hbd.cakedecorating.oauth.repository.CookieAuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
+import static hbd.cakedecorating.oauth.repository.CookieAuthorizationRequestRepository.REFRESH_TOKEN;
 
 @Slf4j
 @Component
@@ -108,10 +109,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         int cookieMaxAge = (int) (refreshTokenExpiry / 60);
 
-        CookieUtils.deleteCookie(request, response, "refresh_token");
-        CookieUtils.addCookie(response, "refresh_token", refreshToken.getToken(), cookieMaxAge);
-
-        //UserResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+        // Access Token : LocalStorage / Refresh Token : Cookie(http only secure)에 저장
+        CookieUtils.deleteCookie(request, response, REFRESH_TOKEN);
+        CookieUtils.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
 
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("token", accessToken.getToken())

@@ -1,4 +1,4 @@
-package hbd.cakedecorating.service.food;
+package hbd.cakedecorating.api.service.food;
 
 import hbd.cakedecorating.dto.food.FoodListDto;
 import hbd.cakedecorating.api.model.Food;

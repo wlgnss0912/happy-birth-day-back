@@ -1,4 +1,4 @@
-package hbd.cakedecorating.controller;
+package hbd.cakedecorating.api.controller;
 
 import hbd.cakedecorating.dto.user.UserUpdateDto;
 import jakarta.servlet.http.HttpServletRequest;

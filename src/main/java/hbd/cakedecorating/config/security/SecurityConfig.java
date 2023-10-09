@@ -1,8 +1,10 @@
 package hbd.cakedecorating.config.security;
 
+import hbd.cakedecorating.oauth.exception.RestAuthenticationEntryPoint;
 import hbd.cakedecorating.oauth.filter.TokenAuthenticationFilter;
 import hbd.cakedecorating.oauth.handler.OAuth2AuthenticationFailureHandler;
 import hbd.cakedecorating.oauth.handler.OAuth2AuthenticationSuccessHandler;
+import hbd.cakedecorating.oauth.handler.TokenAccessDeniedHandler;
 import hbd.cakedecorating.oauth.repository.CookieAuthorizationRequestRepository;
 import hbd.cakedecorating.oauth.service.CustomOAuth2UserService;
 import hbd.cakedecorating.oauth.service.CustomUserDetailsService;
@@ -14,7 +16,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -29,6 +30,7 @@ public class SecurityConfig {
     private final CookieAuthorizationRequestRepository cookieAuthorizationRequestRepository;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
 
     /**
      * UserDetailsService 설정 - 인증에 대한 지원
@@ -47,11 +49,15 @@ public class SecurityConfig {
         http
                 .cors()
                 .and()
-                .httpBasic().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .csrf().disable()
                 .formLogin().disable()
+                .httpBasic().disable()
                 .rememberMe().disable()//로그인 상태 유지 X
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .exceptionHandling()
+                .authenticationEntryPoint(new RestAuthenticationEntryPoint())// 401
+                .accessDeniedHandler(tokenAccessDeniedHandler);// 403
 
         //요청에 대한 권한 설정
         http.authorizeHttpRequests()
@@ -74,19 +80,12 @@ public class SecurityConfig {
                 .clearAuthentication(true)
                 .deleteCookies("JSESSIONID");
 
-        //jwt filter 설정
+        // jwt filter 설정
+        // 클라이언트의 요청에 포함되어있는 AccessToken의 유효 확인
         http.addFilterBefore(new TokenAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
 
-    }
-
-    /*
-     * security 설정 시, 사용할 인코더 설정
-     * */
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
 }

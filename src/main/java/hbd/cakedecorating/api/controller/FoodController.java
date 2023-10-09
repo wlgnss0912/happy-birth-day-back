@@ -1,7 +1,7 @@
-package hbd.cakedecorating.controller;
+package hbd.cakedecorating.api.controller;
 
 import hbd.cakedecorating.dto.food.FoodListDto;
-import hbd.cakedecorating.service.food.FoodService;
+import hbd.cakedecorating.api.service.food.FoodService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

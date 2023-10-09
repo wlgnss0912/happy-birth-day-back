@@ -1,5 +1,6 @@
 package hbd.cakedecorating.service.food;
 
+import hbd.cakedecorating.api.service.food.FoodService;
 import hbd.cakedecorating.dto.food.FoodListDto;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -7,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +16,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 class FoodServiceTest {
 
-    @Autowired FoodService foodService;
+    @Autowired
+    FoodService foodService;
 
     @Test
     public void 음식리스트조회() throws Exception {
