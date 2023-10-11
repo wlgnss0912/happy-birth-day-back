@@ -7,7 +7,6 @@ import hbd.cakedecorating.oauth.handler.OAuth2AuthenticationSuccessHandler;
 import hbd.cakedecorating.oauth.handler.TokenAccessDeniedHandler;
 import hbd.cakedecorating.oauth.repository.CookieAuthorizationRequestRepository;
 import hbd.cakedecorating.oauth.service.CustomOAuth2UserService;
-import hbd.cakedecorating.oauth.service.CustomUserDetailsService;
 import hbd.cakedecorating.oauth.token.AuthTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +14,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -24,23 +22,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
-    private final CustomUserDetailsService userDetailsService;
     private final CustomOAuth2UserService oAuth2UserService;
     private final AuthTokenProvider tokenProvider;
     private final CookieAuthorizationRequestRepository cookieAuthorizationRequestRepository;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
-
-    /**
-     * UserDetailsService 설정 - 인증에 대한 지원
-     * OAuth2를 사용하여 소셜 계정으로 로그인하면 CustomOAuth2UserService 클래스가 OAuth2 제공업체에서 제공하는 사용자 정보를 사용하여 인증된 사용자 정보를 생성합니다.
-     * 이 인증된 사용자 정보는 UserDetailsService 인터페이스를 통해 사용자에게 로그인 권한을 부여하는 데 사용됩니다.
-     */
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return userDetailsService;
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

@@ -63,7 +63,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         //플렛폼 별 사용자 추가정보
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, oAuth2User.getAttributes());
 
-        User savedUser = userRepository.findByEmail(oAuth2UserInfo.getEmail()).orElse(null);
+        //User savedUser = userRepository.findByEmail(oAuth2UserInfo.getEmail()).orElse(null);
+        User savedUser = userRepository.findByUserId(oAuth2UserInfo.getId());
 
         //가입된 경우
         if(savedUser != null) {

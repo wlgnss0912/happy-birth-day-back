@@ -1,6 +1,6 @@
 package hbd.cakedecorating.api.controller.auth;
 
-import hbd.cakedecorating.api.common.ApiResponse;
+import hbd.cakedecorating.common.ApiResponse;
 import hbd.cakedecorating.api.model.user.UserRefreshToken;
 import hbd.cakedecorating.api.repository.user.UserRefreshTokenRepository;
 import hbd.cakedecorating.config.properties.AppProperties;
@@ -14,16 +14,10 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @RestController

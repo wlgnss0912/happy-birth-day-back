@@ -1,4 +1,4 @@
-package hbd.cakedecorating.api.common;
+package hbd.cakedecorating.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

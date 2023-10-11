@@ -14,7 +14,6 @@ import java.net.URISyntaxException;
 @RequiredArgsConstructor
 @RestController
 public class UserController {
-
     @PostMapping("/signup")
     public ResponseEntity<Object> signup(@Validated @RequestBody UserUpdateDto birthday,
                                          HttpServletRequest request,
